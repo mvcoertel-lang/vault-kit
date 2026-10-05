@@ -256,7 +256,7 @@ footer p{margin:0.2rem 0}
 
   <header class="hero">
     <p class="kicker">Anleitung · Windows und Mac</p>
-    <h1>Ordnerstruktur, Regeln, Gedächtnis und Wissensgraph für Claude Code</h1>
+    <h1>Ordnerstruktur, Regeln, gemeinsames Memory und Wissensgraph für Claude Code</h1>
     <p class="lede">Das Kit macht aus dem Ordner, den Claude Code öffnet, einen geregelten Arbeitsplatz: Ergebnisse landen in Dateien, Gelerntes im Memory, und ein Wissensgraph zeigt, was wie zusammenhängt. Alles bleibt als lesbare Datei auf dem eigenen Rechner, ohne Cloud-Index und ohne Datenbank.</p>
     <ul class="facts">
       <li><b>Dauer</b> etwa fünf Minuten</li>
@@ -301,12 +301,12 @@ footer p{margin:0.2rem 0}
       </div>
       <div class="cmp-row" role="row">
         <div class="t" role="rowheader">Wissen über Sitzungen hinweg</div>
-        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Nach <code>/clear</code> oder in einer neuen Sitzung ist das Gelernte weg; man erklärt es erneut.</p></div>
-        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Ein Fakt wird eine Memory-Datei. <code>MEMORY.md</code> ist der Index und wird bei jedem Start geladen.</p></div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Claude Code bringt ein eigenes Auto-Memory mit, von Haus aus an: Claude legt selbst Notizen an, eine Datei je Thema, und liest beim Start den Index <code>MEMORY.md</code>. Es gilt aber je Projekt (Git-Repository, sonst Startordner); wer einen anderen Ordner öffnet, beginnt leer.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Dasselbe Auto-Memory, aber eines für alle Startordner (<code>autoMemoryDirectory</code>). Dazu feste Regeln: Datum je Fakt, Quelldatei bei jeder Zahl, Index höchstens 40 Zeilen. Am Sitzungsende meldet ein Hook Lücken, <code>/memory-review</code> räumt auf.</p></div>
       </div>
       <div class="cmp-row" role="row">
         <div class="t" role="rowheader">Zahlen</div>
-        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Claude nennt Zahlen aus dem Gedächtnis, ohne Quelle.</p></div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Claude nennt Zahlen aus dem Kopf, ohne Quelle.</p></div>
         <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Zahlen kommen aus einer Datei in <code>08_Reference</code> und werden mit Pfad zitiert.</p></div>
       </div>
       <div class="cmp-row" role="row">
@@ -338,7 +338,7 @@ footer p{margin:0.2rem 0}
           <li><span class="n">C:\Users\&lt;name&gt;\.claude\</span>
             <ul>
               <li><span class="n">settings.json</span><span class="d">falls vorhanden</span></li>
-              <li class="dim"><span class="n">projects\&lt;ordner&gt;\</span><span class="d">Verläufe, je Startordner ein eigenes Memory</span></li>
+              <li class="dim"><span class="n">projects\&lt;ordner&gt;\</span><span class="d">Verläufe und Auto-Memory, je Projekt getrennt</span></li>
             </ul>
           </li>
         </ul>
@@ -428,7 +428,7 @@ footer p{margin:0.2rem 0}
         <ol class="flow">
           <li>Claude schreibt einen Entwurf in den Chat.</li>
           <li>Aufbau, Preislogik und Formulierungen besprecht ihr im Gespräch.</li>
-          <li>Beim nächsten Proposal beginnt alles von vorn.</li>
+          <li>Beim nächsten Proposal liegt der Entwurf nur im alten Chat. Was Claude sich selbst gemerkt hat, kennt es nur im selben Ordner wieder.</li>
         </ol>
       </div>
       <div class="col-a">
@@ -657,7 +657,7 @@ cd ~/vault-kit &amp;&amp; ./install.sh</code></pre><button class="copy" type="bu
         Mac (Terminal):
         <div class="codebox"><pre><code id="c-f-mac">python3 ~/.claude/tools/vault-index.py ~/Claude</code></pre><button class="copy" type="button" data-copy="c-f-mac">Kopieren</button></div></dd>
       <dt><small>Windows und Mac</small>Memory scheint leer</dt>
-      <dd>Meist ist ein Unterordner statt des Vaults geöffnet. Claude im Vault-Ordner neu starten.</dd>
+      <dd>In der <code>settings.json</code> im Ordner <code>.claude</code> deines Benutzerordners fehlt <code>autoMemoryDirectory</code>, oder Claude lief schon vor der Installation. Installer noch einmal starten, dann Claude neu starten.</dd>
       <dt><small>Windows und Mac</small><code>claude</code> startet im Terminal nicht im Vault</dt>
       <dd>Ein neues Fenster öffnen, damit das PowerShell-Profil bzw. <code>~/.zshrc</code> neu geladen wird.</dd>
     </dl>
