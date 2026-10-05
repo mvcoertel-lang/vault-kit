@@ -3,3 +3,23 @@ graphify-out/
 graph.viewer.html
 *.backup-*
 .DS_Store
+
+# Secrets: dieses Repo ist öffentlich. Schlüssel gehören in den Schlüsselbund des
+# Betriebssystems (macOS-Schlüsselbund, Windows-Anmeldeinformationsverwaltung), nie in eine Datei hier.
+# Die Muster sind Gurt und Hosentraeger, falls doch einmal eine entsteht.
+.env
+.env.*
+*.env
+*_key
+*_key.txt
+*apikey*
+*api_key*
+*secret*
+*credentials*
+
+# Lokale Arbeitsordner neben dem Kit, nie veröffentlichen (Serverinterna, eigene Repos)
+server-kit/
+agent/
+vault/
+.claude/
+__pycache__/

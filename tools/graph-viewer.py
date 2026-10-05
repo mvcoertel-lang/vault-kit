@@ -9,6 +9,12 @@ Aufruf:
 """
 import json, sys, pathlib, collections
 
+for _s in (sys.stdout, sys.stderr):  # Windows-Konsole: UTF-8 statt cp1252
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 def main():
     if len(sys.argv) < 2:
         sys.exit("Aufruf: graph-viewer.py <graph.json | ordner> [ausgabe.html]")
