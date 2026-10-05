@@ -537,10 +537,12 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1</code></pre><button class
           <label class="step-title"><input type="checkbox"><span>Voraussetzungen prüfen</span></label>
           <div class="step-body">
             <ul>
-              <li><b>Claude Code:</b> die Claude-Desktop-App mit dem Code-Tab oder Claude Code im Terminal.</li>
-              <li><b>Python 3 und git:</b> beide bringen die Command Line Tools mit:
+              <li><b>Claude Code:</b> die Claude-Desktop-App mit dem Code-Tab, oder im Terminal:
+                <div class="codebox"><pre><code id="c-m-claude">curl -fsSL https://claude.ai/install.sh | bash</code></pre><button class="copy" type="button" data-copy="c-m-claude">Kopieren</button></div></li>
+              <li><b>Python 3 und git:</b> beide bringen die Command Line Tools mit. Meldet der Befehl, sie seien schon installiert, ist alles da:
                 <div class="codebox"><pre><code id="c-m-xcode">xcode-select --install</code></pre><button class="copy" type="button" data-copy="c-m-xcode">Kopieren</button></div></li>
-              <li><b>Optional uv</b> für Graphify (Code-Graph je Ordner) und markitdown (PDF und Office als Text): <code>brew install uv</code> oder <a href="https://docs.astral.sh/uv/">docs.astral.sh/uv</a>.</li>
+              <li><b>Optional uv</b> für Graphify (Code-Graph je Ordner) und markitdown (PDF und Office als Text), danach ein neues Terminal-Fenster öffnen:
+                <div class="codebox"><pre><code id="c-m-uv">curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre><button class="copy" type="button" data-copy="c-m-uv">Kopieren</button></div></li>
             </ul>
           </div>
         </li>
@@ -734,7 +736,10 @@ cd ~/vault-kit &amp;&amp; ./install.sh</code></pre><button class="copy" type="bu
       setOS(list[k].getAttribute('data-os'), true);
     });
   }
-  setOS(state.os === 'mac' ? 'mac' : 'win');
+  /* Start: ?os=mac oder ?os=win im Link, sonst die letzte Wahl, sonst das erkannte System */
+  var wahl = (/[?&]os=(mac|win)\b/.exec(location.search) || [])[1];
+  var istMac = /Mac/i.test(navigator.platform || '') || /Macintosh/i.test(navigator.userAgent || '');
+  setOS(wahl || (state.os === 'mac' || state.os === 'win' ? state.os : (istMac ? 'mac' : 'win')));
 
   /* Abhaken mit Fortschritt je System */
   state.done = state.done || {};
