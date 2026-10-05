@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 16'%3E%3Cpath d='M6 15V6M6 6 1.5 2M6 6l4.5-4M6 6 6 1' stroke='%23c25b4e' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>Vault-Kit installieren</title>
+<style>
+/* Farben und Schrift wie im Wissensgraph-Betrachter (tools/graph.template.html).
+   Hell ist abgeleitet; jedes Textpaar ist gegen 4,5:1 geprüft. */
+:root{
+  --bg:#f5f2eb; --bg2:#efebe2; --panel:#fdfbf6; --panel2:#f7f3ea;
+  --hair:#e1dbcf; --hair2:#d3ccbe;
+  --tx:#1c2129; --mut:#4f5864; --quiet:#5c6571;
+  --cream:#1c2129; --onCream:#f5f2eb;
+  --memory:#8a5414; --skills:#2b5c94; --projekte:#356b30; --anweisungen:#6e4290;
+  --before:#a13d31; --after:#356b30;
+  --code:#efe9dd;
+  --shadow:0 10px 30px rgba(40,32,20,0.08);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --serif:"Iowan Old Style","Charter",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#181c24; --bg2:#141821; --panel:#20252f; --panel2:#262c38;
+    --hair:#2f3644; --hair2:#3a4252;
+    --tx:#eae7e0; --mut:#9aa3ae; --quiet:#8f98a4;
+    --cream:#f2ece0; --onCream:#14181f;
+    --memory:#d8a15c; --skills:#7fa8d9; --projekte:#8fbf88; --anweisungen:#b58ac9;
+    --before:#e07a6c; --after:#8fbf88;
+    --code:#141821;
+    --shadow:0 14px 36px rgba(0,0,0,0.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#181c24; --bg2:#141821; --panel:#20252f; --panel2:#262c38;
+  --hair:#2f3644; --hair2:#3a4252;
+  --tx:#eae7e0; --mut:#9aa3ae; --quiet:#8f98a4;
+  --cream:#f2ece0; --onCream:#14181f;
+  --memory:#d8a15c; --skills:#7fa8d9; --projekte:#8fbf88; --anweisungen:#b58ac9;
+  --before:#e07a6c; --after:#8fbf88;
+  --code:#141821;
+  --shadow:0 14px 36px rgba(0,0,0,0.35);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none !important; animation:none !important} }
+body{margin:0; background:var(--bg); color:var(--tx); font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-wrap:break-word}
+a{color:inherit; text-decoration-color:var(--hair2); text-underline-offset:0.2em}
+a:hover{text-decoration-color:currentColor}
+code{font-family:var(--mono); font-size:0.88em; background:var(--code); border:1px solid var(--hair);
+  border-radius:4px; padding:0.05em 0.32em; overflow-wrap:anywhere}
+:focus-visible{outline:2px solid var(--skills); outline-offset:2px}
+
+.wrap{max-width:66rem; margin:0 auto; padding:0 clamp(16px,4vw,40px)}
+
+/* Kopf */
+.top{display:flex; align-items:center; gap:1rem; padding:1.2rem 0 0}
+.brand{display:flex; align-items:center; gap:0.6rem; font-family:var(--serif); letter-spacing:0.22em;
+  font-size:0.78rem; text-transform:uppercase}
+.brand svg{width:15px; height:19px; flex:none}
+.brand svg path{stroke:var(--tx)}
+.theme{margin-left:auto; background:none; border:1px solid var(--hair2); color:var(--mut); border-radius:999px;
+  padding:0.38rem 0.85rem; font:inherit; font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; cursor:pointer}
+.theme:hover{color:var(--tx); border-color:var(--quiet)}
+
+header.hero{padding:clamp(2.2rem,7vw,4.6rem) 0 clamp(1.6rem,4vw,2.6rem); border-bottom:1px solid var(--hair)}
+.kicker{font-size:0.66rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--quiet); margin:0 0 0.9rem}
+h1{font-family:var(--serif); font-weight:500; font-size:clamp(1.9rem,5.2vw,3.1rem); line-height:1.12;
+  letter-spacing:-0.01em; margin:0; max-width:24ch; text-wrap:balance}
+.lede{font-size:clamp(1rem,2.2vw,1.12rem); color:var(--mut); max-width:44rem; margin:1.1rem 0 0}
+.facts{display:flex; flex-wrap:wrap; gap:0.5rem 1.6rem; margin:1.5rem 0 0; padding:0; list-style:none;
+  font-size:0.82rem; color:var(--mut)}
+.facts b{color:var(--tx); font-weight:600}
+nav.toc{display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:1.6rem}
+nav.toc a{font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; text-decoration:none;
+  border:1px solid var(--hair2); border-radius:999px; padding:0.45rem 0.9rem; color:var(--mut); background:var(--panel)}
+nav.toc a:hover{color:var(--tx); border-color:var(--quiet)}
+
+/* Abschnitte */
+section{padding:clamp(2.4rem,6vw,4rem) 0; border-bottom:1px solid var(--hair)}
+section:last-of-type{border-bottom:0}
+.label{font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--quiet); margin:0 0 0.6rem}
+h2{font-family:var(--serif); font-weight:500; font-size:clamp(1.5rem,3.6vw,2.1rem); line-height:1.2; margin:0 0 0.8rem}
+h3{font-family:var(--serif); font-weight:600; font-size:1.12rem; line-height:1.3; margin:0 0 0.6rem}
+.intro{color:var(--mut); max-width:44rem; margin:0 0 1.6rem}
+.note{font-size:0.86rem; color:var(--mut)}
+
+/* Umschalter */
+.seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--hair2); border-radius:999px; overflow:hidden; background:var(--panel)}
+.seg button{background:none; border:0; color:var(--mut); font-family:var(--sans); font-size:0.64rem; letter-spacing:0.16em;
+  text-transform:uppercase; padding:0.55rem 1rem; cursor:pointer; transition:background 160ms, color 160ms}
+.seg button + button{border-left:1px solid var(--hair2)}
+.seg button:hover{color:var(--tx)}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--cream); color:var(--onCream)}
+.segrow{display:flex; flex-wrap:wrap; align-items:center; gap:0.6rem 1rem; margin:0 0 1.4rem}
+.segrow .hint{font-size:0.78rem; color:var(--quiet)}
+
+/* Vorher / Nachher: zwei Spalten, Dimmen je Ansicht */
+.cmp{border-top:1px solid var(--hair)}
+.cmp-head,.cmp-row{display:grid; grid-template-columns:10.5rem minmax(0,1fr) minmax(0,1fr); gap:0 1.6rem}
+.cmp-head{padding:0.7rem 0; font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; border-bottom:1px solid var(--hair)}
+.cmp-head .b{color:var(--before)} .cmp-head .a{color:var(--after)}
+.cmp-row{padding:1rem 0; border-bottom:1px solid var(--hair)}
+.cmp-row .t{font-family:var(--serif); font-weight:600; font-size:0.98rem; line-height:1.35}
+.cmp-row p{margin:0; font-size:0.94rem}
+.cmp-row .bef{color:var(--mut)}
+.cmp-row .mini{display:none; font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:0.15rem}
+.bef .mini{color:var(--before)} .aft .mini{color:var(--after)}
+.view .bef,.view .aft,.view .col-b,.view .col-a{transition:opacity 420ms var(--ease), filter 420ms var(--ease)}
+.view[data-view="before"] .aft,.view[data-view="before"] .col-a{opacity:0.07; filter:blur(1.5px)}
+.view[data-view="after"] .bef,.view[data-view="after"] .col-b{opacity:0.38}
+.view[data-view="before"] .bef,.view[data-view="before"] .col-b ol.flow{color:var(--tx)}
+.cmp-head .b,.cmp-head .a{transition:opacity 420ms var(--ease)}
+.view[data-view="before"] .cmp-head .a{opacity:0.15} .view[data-view="after"] .cmp-head .b{opacity:0.38}
+@media (max-width:720px){
+  .cmp-head{display:none}
+  .cmp-row{grid-template-columns:1fr; gap:0.55rem}
+  .cmp-row .mini{display:block}
+  .cmp-row .bef,.cmp-row .aft{padding-left:0.8rem; border-left:2px solid var(--hair2)}
+  .cmp-row .bef{border-left-color:var(--before)} .cmp-row .aft{border-left-color:var(--after)}
+}
+
+/* Zwei Spalten für Ordnerbaum und Beispiel */
+.duo{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:1.6rem; margin-top:2.4rem}
+.duo > div{min-width:0}
+.col-b h3{color:var(--before)} .col-a h3{color:var(--after)}
+.col-b,.col-a{border-top:2px solid var(--hair2); padding-top:1rem}
+.col-b{border-top-color:var(--before)} .col-a{border-top-color:var(--after)}
+@media (max-width:720px){ .duo{grid-template-columns:1fr} }
+
+/* Ordnerbaum als Liste, damit die Erklärungen auf schmalen Bildschirmen umbrechen */
+ul.tree,ul.tree ul{list-style:none; margin:0; padding:0}
+ul.tree ul{margin-left:0.55rem; padding-left:0.9rem; border-left:1px solid var(--hair2)}
+ul.tree li{padding:0.2rem 0}
+ul.tree .n{font-family:var(--mono); font-size:0.84rem; color:var(--tx); overflow-wrap:anywhere}
+ul.tree .d{font-size:0.8rem; color:var(--quiet); margin-left:0.6rem}
+ul.tree .dim .n{color:var(--quiet)}
+@media (max-width:520px){ ul.tree .d{display:block; margin-left:0} }
+.tree-note{margin:0.9rem 0 0; font-size:0.84rem; color:var(--mut)}
+
+/* Wissensgraph-Block */
+.graph{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:2rem; align-items:center; margin-top:2.6rem;
+  padding:1.6rem; background:var(--panel); border:1px solid var(--hair); border-radius:12px}
+.graph svg{width:100%; height:auto; display:block}
+.graph svg .ln{stroke:var(--hair2); stroke-width:1}
+.legend{display:grid; gap:0.5rem; margin:1rem 0 1.2rem; padding:0; list-style:none; font-size:0.88rem}
+.legend li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:0.6rem; align-items:baseline}
+.legend i{width:9px; height:9px; border-radius:50%; display:inline-block; transform:translateY(-1px)}
+.legend b{font-weight:600}
+.btn{display:inline-flex; align-items:center; gap:0.5rem; text-decoration:none; background:var(--cream); color:var(--onCream);
+  border-radius:999px; padding:0.65rem 1.15rem; font-size:0.66rem; letter-spacing:0.16em; text-transform:uppercase; font-weight:600}
+.btn:hover{opacity:0.9}
+@media (max-width:720px){ .graph{grid-template-columns:1fr; padding:1.1rem} }
+
+/* Beispiel */
+.prompt{margin:2.6rem 0 0; padding:1.1rem 1.3rem; border-left:3px solid var(--anweisungen); background:var(--panel);
+  border-radius:0 10px 10px 0; font-family:var(--serif); font-size:1.08rem; line-height:1.45}
+.prompt small{display:block; font-family:var(--sans); font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--quiet); margin-bottom:0.35rem}
+ol.flow{margin:0; padding-left:1.3rem}
+ol.flow li{margin:0 0 0.55rem; font-size:0.94rem}
+ol.flow li::marker{color:var(--quiet); font-variant-numeric:tabular-nums}
+.col-b ol.flow{color:var(--mut)}
+.tip{margin:1.8rem 0 0; font-size:0.92rem; color:var(--mut); max-width:46rem}
+.tip b{color:var(--tx)}
+
+/* Installation */
+.tabs{margin:0 0 1.6rem}
+.panel[hidden]{display:none}
+.way{margin:0 0 2.4rem}
+.way-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:0.4rem 0.9rem; margin-bottom:0.6rem}
+.way-head h3{margin:0}
+.badge{font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; border:1px solid var(--after); color:var(--after);
+  border-radius:999px; padding:0.14rem 0.55rem}
+.codebox{position:relative; margin:0.7rem 0 0.4rem; background:var(--code); border:1px solid var(--hair); border-radius:10px}
+.codebox pre{margin:0; padding:0.9rem 1rem; padding-right:6.2rem; overflow-x:auto; font-family:var(--mono); font-size:0.84rem;
+  line-height:1.55; white-space:pre; tab-size:2}
+.codebox pre.wrapline{white-space:pre-wrap; overflow-wrap:anywhere}
+.codebox code{background:none; border:0; padding:0; font-size:inherit}
+.copy{position:absolute; top:0.55rem; right:0.55rem; background:var(--panel); border:1px solid var(--hair2); color:var(--mut);
+  border-radius:999px; padding:0.32rem 0.75rem; font:inherit; font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase; cursor:pointer}
+.copy:hover{color:var(--tx); border-color:var(--quiet)}
+.copy.ok{color:var(--after); border-color:var(--after)}
+@media (max-width:520px){
+  .codebox pre{padding-right:1rem; padding-top:2.6rem}
+}
+
+.progress{display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 1rem; margin:0 0 1rem; font-size:0.82rem; color:var(--mut)}
+.bar{flex:1 1 10rem; height:4px; background:var(--hair); border-radius:2px; overflow:hidden; min-width:6rem}
+.bar span{display:block; height:100%; width:0; background:var(--after); transition:width 300ms var(--ease)}
+.reset{background:none; border:0; color:var(--quiet); font:inherit; font-size:0.78rem; text-decoration:underline; text-underline-offset:0.2em; cursor:pointer; padding:0}
+.reset:hover{color:var(--tx)}
+
+ol.steps{list-style:none; margin:0; padding:0; counter-reset:st}
+ol.steps > li{counter-increment:st; display:grid; grid-template-columns:2rem minmax(0,1fr); gap:0 0.9rem; padding:1.1rem 0; border-top:1px solid var(--hair)}
+ol.steps > li:last-child{border-bottom:1px solid var(--hair)}
+ol.steps > li::before{content:counter(st); grid-row:1 / span 2; font-family:var(--serif); font-size:1.05rem; color:var(--quiet); line-height:1.6; text-align:right}
+ol.steps > li > *{grid-column:2}
+.step-title{display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-weight:600; line-height:1.45}
+.step-title input{width:1.05rem; height:1.05rem; margin:0.2rem 0 0; accent-color:var(--after); flex:none; cursor:pointer}
+li.done .step-title span{color:var(--quiet); text-decoration:line-through; text-decoration-color:var(--hair2)}
+.step-body{margin-top:0.4rem; font-size:0.93rem; color:var(--mut)}
+.step-body p{margin:0.35rem 0}
+.step-body ul{margin:0.35rem 0; padding-left:1.15rem}
+.step-body li{margin:0.25rem 0}
+.opts{display:grid; grid-template-columns:auto minmax(0,1fr); gap:0.3rem 0.9rem; margin:0.6rem 0; font-size:0.9rem}
+.opts dt{font-family:var(--mono); font-size:0.82rem; color:var(--tx)}
+.opts dd{margin:0}
+@media (max-width:520px){
+  .opts{grid-template-columns:1fr} .opts dd{margin-bottom:0.4rem}
+  ol.steps > li{grid-template-columns:1.2rem minmax(0,1fr); gap:0 0.6rem}
+  .step-body ul{padding-left:0.95rem}
+}
+
+/* Alltag */
+.daily{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:2rem 2.4rem}
+.daily ul{margin:0; padding:0; list-style:none}
+.daily li{padding:0.4rem 0; border-top:1px solid var(--hair); font-size:0.92rem; color:var(--mut)}
+.daily li b{color:var(--tx); font-family:var(--mono); font-size:0.84rem; font-weight:500; margin-right:0.35rem}
+.daily h3 i{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:0.5rem; transform:translateY(-2px)}
+@media (max-width:720px){ .daily{grid-template-columns:1fr} }
+
+/* Fehlerbehebung */
+dl.faq{margin:0; display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.3fr); gap:0}
+dl.faq dt,dl.faq dd{padding:0.9rem 0; border-top:1px solid var(--hair); margin:0; min-width:0}
+dl.faq dt{font-weight:600; padding-right:1.6rem; line-height:1.45}
+dl.faq dd{color:var(--mut); font-size:0.93rem}
+dl.faq dt small{display:block; font-weight:400; font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--quiet); margin-bottom:0.15rem}
+@media (max-width:720px){ dl.faq{grid-template-columns:minmax(0,1fr)} dl.faq dd{border-top:0; padding-top:0.1rem} }
+.caveat{margin:1.8rem 0 0; padding:0.9rem 1.1rem; border:1px solid var(--hair2); border-radius:10px; font-size:0.9rem; color:var(--mut); background:var(--panel)}
+.caveat b{color:var(--tx)}
+
+footer{padding:2rem 0 3rem; font-size:0.78rem; color:var(--quiet)}
+footer p{margin:0.2rem 0}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <svg viewBox="0 0 12 16" aria-hidden="true"><path d="M6 15V6M6 6 1.5 2M6 6l4.5-4M6 6 6 1" stroke-width="1" fill="none" stroke-linecap="round"/></svg>
+      <span>Vault-Kit</span>
+    </div>
+    <button class="theme" id="theme" type="button" aria-label="Farbschema wechseln">Auto</button>
+  </div>
+
+  <header class="hero">
+    <p class="kicker">Anleitung · Windows und Mac</p>
+    <h1>Ordnerstruktur, Regeln, Gedächtnis und Wissensgraph für Claude Code</h1>
+    <p class="lede">Das Kit macht aus dem Ordner, den Claude Code öffnet, einen geregelten Arbeitsplatz: Ergebnisse landen in Dateien, Gelerntes im Memory, und ein Wissensgraph zeigt, was wie zusammenhängt. Alles bleibt als lesbare Datei auf dem eigenen Rechner, ohne Cloud-Index und ohne Datenbank.</p>
+    <ul class="facts">
+      <li><b>Dauer</b> etwa fünf Minuten</li>
+      <li><b>System</b> Windows 11 oder macOS</li>
+      <li><b>Quelle</b> <a href="https://github.com/mvcoertel-lang/vault-kit">github.com/mvcoertel-lang/vault-kit</a></li>
+    </ul>
+    <nav class="toc" aria-label="Inhalt">
+      <a href="#vergleich">Vorher und Nachher</a>
+      <a href="#installation">Installation</a>
+      <a href="#alltag">Im Alltag</a>
+      <a href="#hilfe">Fehlerbehebung</a>
+    </nav>
+  </header>
+
+  <main>
+
+  <!-- ============ Vorher / Nachher ============ -->
+  <section id="vergleich" class="view" data-view="both">
+    <p class="label">Was sich ändert</p>
+    <h2>Vorher und Nachher</h2>
+    <p class="intro">Claude Code liest zu Beginn jeder Sitzung Dateien ein: eine Kette von <code>CLAUDE.md</code>-Dateien und ein Memory-Verzeichnis. Ohne Struktur wachsen beide ungeordnet, und vieles bleibt im Chat liegen. Das Kit legt fest, wo was hingehört.</p>
+
+    <div class="segrow">
+      <div class="seg" role="group" aria-label="Ansicht">
+        <button type="button" data-view="both" aria-pressed="true">Beides</button>
+        <button type="button" data-view="before" aria-pressed="false">Vorher</button>
+        <button type="button" data-view="after" aria-pressed="false">Nachher</button>
+      </div>
+      <span class="hint">Zum Zeigen: erst „Vorher“, dann „Nachher“.</span>
+    </div>
+
+    <div class="cmp" role="table" aria-label="Vergleich ohne und mit Kit">
+      <div class="cmp-head" role="row">
+        <span role="columnheader">Thema</span>
+        <span class="b" role="columnheader">Ohne Kit</span>
+        <span class="a" role="columnheader">Mit Kit</span>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Ergebnisse</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Die Antwort steht im Chat und ist nach dem Schließen nur noch im Verlauf zu finden.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Jedes Ergebnis wird eine Datei im Projektordner, zum Beispiel in <code>04_Output</code>.</p></div>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Wissen über Sitzungen hinweg</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Nach <code>/clear</code> oder in einer neuen Sitzung ist das Gelernte weg; man erklärt es erneut.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Ein Fakt wird eine Memory-Datei. <code>MEMORY.md</code> ist der Index und wird bei jedem Start geladen.</p></div>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Zahlen</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Claude nennt Zahlen aus dem Gedächtnis, ohne Quelle.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Zahlen kommen aus einer Datei in <code>08_Reference</code> und werden mit Pfad zitiert.</p></div>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Anweisungen</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Eine einzige <code>CLAUDE.md</code> wächst mit jeder Regel. Jede Runde liest alles mit und wird teurer und unschärfer.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Eine Kette aus Global, Vault und Projekt. Geladen wird nur, was für die aktuelle Arbeit gilt.</p></div>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Überblick</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Was es schon gibt und was zusammenhängt, steht nirgends.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Der Wissensgraph <code>_Index/graph.html</code> zeigt Memory, Skills, Projekte und Anweisungen mit ihren Verbindungen.</p></div>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Wiederkehrende Aufgaben</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Vorgehen, Format und bekannte Fallen werden jedes Mal neu erklärt.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Skills für wiederkehrende Aufgaben und ein Arbeitsmodus-Command je Projekt, das die Projektregeln lädt.</p></div>
+      </div>
+      <div class="cmp-row" role="row">
+        <div class="t" role="rowheader">Freigaben</div>
+        <div class="bef" role="cell"><span class="mini">Ohne Kit</span><p>Claude fragt bei fast jedem Befehl nach, auch bei rein lesenden.</p></div>
+        <div class="aft" role="cell"><span class="mini">Mit Kit</span><p>Freigaberegeln erlauben lesende Befehle, Änderungen im Vault laufen ohne Rückfrage (<code>acceptEdits</code>). Löschen, <code>curl</code> und <code>git push</code> fragen weiterhin.</p></div>
+      </div>
+    </div>
+
+    <div class="duo">
+      <div class="col-b">
+        <h3>Ordner vorher</h3>
+        <ul class="tree">
+          <li><span class="n">C:\Users\&lt;name&gt;\.claude\</span>
+            <ul>
+              <li><span class="n">settings.json</span><span class="d">falls vorhanden</span></li>
+              <li class="dim"><span class="n">projects\&lt;ordner&gt;\</span><span class="d">Verläufe, je Startordner ein eigenes Memory</span></li>
+            </ul>
+          </li>
+        </ul>
+        <p class="tree-note">Kein fester Arbeitsordner, keine Regeln. Wer einmal einen anderen Ordner öffnet, landet in einem leeren Memory.</p>
+      </div>
+      <div class="col-a">
+        <h3>Ordner nachher</h3>
+        <ul class="tree">
+          <li><span class="n">C:\Users\&lt;name&gt;\Claude\</span><span class="d">der Vault</span>
+            <ul>
+              <li><span class="n">CLAUDE.md</span><span class="d">Regeln und Routing-Tabelle</span></li>
+              <li><span class="n">00_Method\ 00_Sources\</span><span class="d">Standards, wiederverwendbare Quellen</span></li>
+              <li><span class="n">&lt;Projekt&gt;\</span><span class="d">eigene <code>CLAUDE.md</code>, Ordner 01 bis 09 nach Bedarf</span></li>
+              <li><span class="n">_Index\graph.html</span><span class="d">Wissensgraph</span></li>
+              <li><span class="n">.claude\</span><span class="d">skills, agents, commands</span></li>
+            </ul>
+          </li>
+          <li><span class="n">C:\Users\&lt;name&gt;\.claude\</span>
+            <ul>
+              <li><span class="n">CLAUDE.md</span><span class="d">Zeiger auf den Vault</span></li>
+              <li><span class="n">settings.json</span><span class="d"><code>autoMemoryDirectory</code> (ein Memory für alle Sitzungen), Freigaberegeln, Hooks</span></li>
+              <li><span class="n">tools\</span><span class="d">vault-index.py, graph.template.html, index-zusammenfassen.py und weitere</span></li>
+              <li><span class="n">projects\&lt;slug&gt;\memory\</span><span class="d"><code>MEMORY.md</code> und eine Datei je Fakt</span></li>
+            </ul>
+          </li>
+        </ul>
+        <p class="tree-note">Auf dem Mac dieselbe Struktur unter <code>~/Claude</code> und <code>~/.claude</code>.</p>
+      </div>
+    </div>
+
+    <div class="graph">
+      <svg viewBox="0 0 340 220" role="img" aria-label="Skizze des Wissensgraphen mit vier Abteilungen: Anweisungen, Memory, Skills und Projekte, verbunden durch Linien">
+        <g class="lines">
+          <line class="ln" x1="170" y1="34" x2="170" y2="70"/>
+          <line class="ln" x1="170" y1="70" x2="128" y2="98"/>
+          <line class="ln" x1="170" y1="70" x2="214" y2="96"/>
+          <line class="ln" x1="170" y1="70" x2="170" y2="150"/>
+          <line class="ln" x1="128" y1="98" x2="70" y2="84"/>
+          <line class="ln" x1="128" y1="98" x2="58" y2="122"/>
+          <line class="ln" x1="70" y1="84" x2="38" y2="66"/>
+          <line class="ln" x1="58" y1="122" x2="34" y2="150"/>
+          <line class="ln" x1="58" y1="122" x2="92" y2="150"/>
+          <line class="ln" x1="70" y1="84" x2="58" y2="122"/>
+          <line class="ln" x1="214" y1="96" x2="272" y2="78"/>
+          <line class="ln" x1="214" y1="96" x2="284" y2="120"/>
+          <line class="ln" x1="272" y1="78" x2="306" y2="56"/>
+          <line class="ln" x1="284" y1="120" x2="312" y2="148"/>
+          <line class="ln" x1="170" y1="150" x2="132" y2="184"/>
+          <line class="ln" x1="170" y1="150" x2="206" y2="186"/>
+          <line class="ln" x1="170" y1="150" x2="92" y2="150"/>
+          <line class="ln" x1="170" y1="150" x2="284" y2="120"/>
+          <line class="ln" x1="92" y1="150" x2="132" y2="184"/>
+          <line class="ln" x1="206" y1="186" x2="246" y2="168"/>
+        </g>
+        <g fill="var(--anweisungen)">
+          <circle cx="170" cy="34" r="5"/><circle cx="170" cy="70" r="7.5"/>
+        </g>
+        <g fill="var(--memory)">
+          <circle cx="128" cy="98" r="6"/><circle cx="70" cy="84" r="5"/><circle cx="58" cy="122" r="6.5"/>
+          <circle cx="38" cy="66" r="3.5"/><circle cx="34" cy="150" r="3.5"/><circle cx="92" cy="150" r="4.5"/>
+        </g>
+        <g fill="var(--skills)">
+          <circle cx="214" cy="96" r="6"/><circle cx="272" cy="78" r="5"/><circle cx="284" cy="120" r="5.5"/>
+          <circle cx="306" cy="56" r="3.5"/><circle cx="312" cy="148" r="3.5"/>
+        </g>
+        <g fill="var(--projekte)">
+          <circle cx="170" cy="150" r="8"/><circle cx="132" cy="184" r="5"/><circle cx="206" cy="186" r="5.5"/><circle cx="246" cy="168" r="3.5"/>
+        </g>
+      </svg>
+      <div>
+        <h3>Der Wissensgraph</h3>
+        <p class="note">Er zeigt die Verbindungsschicht des Vaults, nicht den Inhalt der Dateien: was Claude weiß, wo es liegt und was zusammenhängt. Neubau am Ende jeder Sitzung, Anzeige offline im Browser. Kurze Erklärungen je Punkt schreibt Claude im Hintergrund.</p>
+        <ul class="legend">
+          <li><i style="background:var(--anweisungen)"></i><span><b>Anweisungen</b> · die <code>CLAUDE.md</code>-Kette</span></li>
+          <li><i style="background:var(--memory)"></i><span><b>Memory</b> · gelernte Fakten, eine Datei je Fakt</span></li>
+          <li><i style="background:var(--skills)"></i><span><b>Skills</b> · Fähigkeiten für wiederkehrende Aufgaben</span></li>
+          <li><i style="background:var(--projekte)"></i><span><b>Projekte</b> · die Ordner im Vault</span></li>
+        </ul>
+        <a class="btn" href="demo/graph.html">Wissensgraph ansehen (Beispiel-Vault)</a>
+      </div>
+    </div>
+
+    <div class="prompt"><small>Beispiel</small>„Bau mir ein Proposal für eine SAP-Einführung bei einem Halbleiterhersteller.“</div>
+    <div class="duo">
+      <div class="col-b">
+        <h3>Ohne Kit</h3>
+        <ol class="flow">
+          <li>Claude schreibt einen Entwurf in den Chat.</li>
+          <li>Aufbau, Preislogik und Formulierungen besprecht ihr im Gespräch.</li>
+          <li>Beim nächsten Proposal beginnt alles von vorn.</li>
+        </ol>
+      </div>
+      <div class="col-a">
+        <h3>Mit Kit</h3>
+        <ol class="flow">
+          <li><code>vault-init</code> legt das Projekt an: Ordner, eigene <code>CLAUDE.md</code> und eine Routing-Zeile in der Vault-<code>CLAUDE.md</code>.</li>
+          <li>PowerPoint-Master und Vergleichs-Proposals liegen in <code>08_Reference</code>, der Entwurf entsteht in <code>04_Output</code>.</li>
+          <li>Was ihr dabei festlegt (Aufbau, Preislogik, Formulierungen), hält Claude als Memory fest.</li>
+          <li>Beim nächsten Proposal liest Claude Memory und das alte Projekt und setzt dort an.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="tip"><b>Das erste Proposal baust du gemeinsam mit Claude, nicht von Claude allein.</b> Master vorgeben, zwei oder drei gute Vergleichs-Proposals als Kontext geben und Schritt für Schritt durchgehen. Claude weiß nicht von selbst, was ein gutes Proposal in deinem Umfeld ausmacht; ab dem zweiten wird wiederverwendet, was beim ersten entstanden ist.</p>
+  </section>
+
+  <!-- ============ Installation ============ -->
+  <section id="installation">
+    <p class="label">In fünf Minuten</p>
+    <h2>Installation</h2>
+    <p class="intro">Zwei Wege. Weg A ist der kürzeste: Claude richtet das Kit selbst ein und fragt vor jedem Befehl um Freigabe. Weg B ist dieselbe Arbeit von Hand.</p>
+
+    <div class="tabs">
+      <div class="seg" role="tablist" aria-label="Betriebssystem">
+        <button type="button" role="tab" id="tab-win" aria-controls="panel-win" aria-selected="true" data-os="win">Windows</button>
+        <button type="button" role="tab" id="tab-mac" aria-controls="panel-mac" aria-selected="false" data-os="mac" tabindex="-1">Mac</button>
+      </div>
+    </div>
+
+    <div class="way">
+      <div class="way-head"><h3>Weg A: Claude macht es</h3><span class="badge">Empfohlen</span></div>
+      <p class="note">In Claude Code einfügen (Desktop-App, Code-Tab, beliebiger Ordner, oder Terminal):</p>
+      <div class="codebox"><pre class="wrapline"><code id="c-prompt">Richte mir das vault-kit ein: Lade https://github.com/mvcoertel-lang/vault-kit nach ~/vault-kit (git clone, sonst als ZIP), führe unter Windows `powershell -ExecutionPolicy Bypass -File install.ps1` aus, auf dem Mac `./install.sh`, und zeig mir die Ausgabe. Sag mir danach, welchen Ordner ich in Claude öffnen soll.</code></pre><button class="copy" type="button" data-copy="c-prompt">Kopieren</button></div>
+      <p class="note">Danach weiter bei Schritt 3 von Weg B.</p>
+    </div>
+
+    <!-- Windows -->
+    <div class="panel" id="panel-win" role="tabpanel" aria-labelledby="tab-win" data-list="win">
+      <div class="way-head"><h3>Weg B: selbst installieren (Windows)</h3></div>
+      <div class="progress" aria-live="polite"><span class="count">0 von 6 erledigt</span><span class="bar"><span></span></span><button class="reset" type="button">zurücksetzen</button></div>
+      <ol class="steps">
+        <li data-step="win-1">
+          <label class="step-title"><input type="checkbox"><span>Voraussetzungen prüfen</span></label>
+          <div class="step-body">
+            <ul>
+              <li><b>Claude Code:</b> die Claude-Desktop-App mit dem Code-Tab, oder in PowerShell:
+                <div class="codebox"><pre><code id="c-w-claude">irm https://claude.ai/install.ps1 | iex</code></pre><button class="copy" type="button" data-copy="c-w-claude">Kopieren</button></div></li>
+              <li><b>Git for Windows</b> von <a href="https://git-scm.com/download/win">git-scm.com</a>. Claude Code nutzt die mitgelieferte Git Bash.</li>
+              <li><b>Python 3.10 oder neuer</b> von <a href="https://www.python.org/downloads/windows/">python.org</a>; beim Installieren „Add python.exe to PATH“ ankreuzen. Oder:
+                <div class="codebox"><pre><code id="c-w-py">winget install Python.Python.3.12</code></pre><button class="copy" type="button" data-copy="c-w-py">Kopieren</button></div></li>
+              <li><b>Optional uv</b> für Graphify (Code-Graph je Ordner) und markitdown (PDF und Office als Text):
+                <div class="codebox"><pre><code id="c-w-uv">winget install astral-sh.uv</code></pre><button class="copy" type="button" data-copy="c-w-uv">Kopieren</button></div></li>
+            </ul>
+          </div>
+        </li>
+        <li data-step="win-2">
+          <label class="step-title"><input type="checkbox"><span>Kit holen und installieren (PowerShell)</span></label>
+          <div class="step-body">
+            <div class="codebox"><pre><code id="c-w-inst">git clone https://github.com/mvcoertel-lang/vault-kit.git $HOME\vault-kit
+cd $HOME\vault-kit
+powershell -ExecutionPolicy Bypass -File .\install.ps1</code></pre><button class="copy" type="button" data-copy="c-w-inst">Kopieren</button></div>
+            <dl class="opts">
+              <dt>-Vault D:\MeinVault</dt><dd>anderer Ort für den Vault (Standard <code>C:\Users\&lt;name&gt;\Claude</code>)</dd>
+              <dt>-NoGraphify</dt><dd>ohne Graphify</dd>
+              <dt>-Live</dt><dd>Live-Anzeige laufender Sitzungen im Graphen; legt eine Aufgabe an, die jede Minute läuft</dd>
+            </dl>
+            <p>Ohne git: <a href="https://github.com/mvcoertel-lang/vault-kit/archive/refs/heads/main.zip">ZIP herunterladen</a>, entpacken und im entpackten Ordner dasselbe <code>install.ps1</code> starten. Der Installer ist mehrfach ausführbar. Eine vorhandene <code>CLAUDE.md</code> im Vault bleibt unverändert, selbst geänderte Skills auch. Die globale <code>settings.json</code> wird nur ergänzt; vorher legt er eine Sicherung <code>settings.json.vor-vault-kit</code> an.</p>
+          </div>
+        </li>
+        <li data-step="win-3">
+          <label class="step-title"><input type="checkbox"><span>Claude im Vault öffnen</span></label>
+          <div class="step-body">
+            <p><b>Desktop-App:</b> Code, Ordner <code>C:\Users\&lt;name&gt;\Claude</code> wählen.</p>
+            <p><b>Terminal:</b> neues PowerShell-Fenster, dann <code>claude</code>. Die Funktion im PowerShell-Profil startet im Vault; <code>claude --here</code> startet im aktuellen Ordner.</p>
+            <p>Immer den Vault selbst öffnen, nicht einen Unterordner.</p>
+          </div>
+        </li>
+        <li data-step="win-4">
+          <label class="step-title"><input type="checkbox"><span>Feinschliff mit Claude</span></label>
+          <div class="step-body">
+            <p>Den Prompt aus <a href="https://github.com/mvcoertel-lang/vault-kit/blob/main/SETUP.md">SETUP.md</a> in die Sitzung im Vault einfügen. Claude prüft die Installation und passt die Skills an deine häufigsten Deliverables an.</p>
+          </div>
+        </li>
+        <li data-step="win-5">
+          <label class="step-title"><input type="checkbox"><span>Wissensgraph öffnen</span></label>
+          <div class="step-body">
+            <p><code>C:\Users\&lt;name&gt;\Claude\_Index\graph.html</code> doppelklicken. Er baut sich am Ende jeder Sitzung neu.</p>
+          </div>
+        </li>
+        <li data-step="win-6">
+          <label class="step-title"><input type="checkbox"><span>Prüfen, ob es geklappt hat</span></label>
+          <div class="step-body">
+            <p>In Claude fragen:</p>
+            <div class="codebox"><pre class="wrapline"><code id="c-w-check">Welche Skills und Agenten hast du, und wo liegt dein Memory?</code></pre><button class="copy" type="button" data-copy="c-w-check">Kopieren</button></div>
+            <p>Erwartet: <code>vault-init</code>, <code>memory-write</code>, <code>analysis</code> und weitere, dazu der Pfad <code>C:\Users\&lt;name&gt;\.claude\projects\…\memory</code>.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Mac -->
+    <div class="panel" id="panel-mac" role="tabpanel" aria-labelledby="tab-mac" data-list="mac" hidden>
+      <div class="way-head"><h3>Weg B: selbst installieren (Mac)</h3></div>
+      <div class="progress" aria-live="polite"><span class="count">0 von 6 erledigt</span><span class="bar"><span></span></span><button class="reset" type="button">zurücksetzen</button></div>
+      <ol class="steps">
+        <li data-step="mac-1">
+          <label class="step-title"><input type="checkbox"><span>Voraussetzungen prüfen</span></label>
+          <div class="step-body">
+            <ul>
+              <li><b>Claude Code:</b> die Claude-Desktop-App mit dem Code-Tab oder Claude Code im Terminal.</li>
+              <li><b>Python 3 und git:</b> beide bringen die Command Line Tools mit:
+                <div class="codebox"><pre><code id="c-m-xcode">xcode-select --install</code></pre><button class="copy" type="button" data-copy="c-m-xcode">Kopieren</button></div></li>
+              <li><b>Optional uv</b> für Graphify (Code-Graph je Ordner) und markitdown (PDF und Office als Text): <code>brew install uv</code> oder <a href="https://docs.astral.sh/uv/">docs.astral.sh/uv</a>.</li>
+            </ul>
+          </div>
+        </li>
+        <li data-step="mac-2">
+          <label class="step-title"><input type="checkbox"><span>Kit holen und installieren (Terminal)</span></label>
+          <div class="step-body">
+            <div class="codebox"><pre><code id="c-m-inst">git clone https://github.com/mvcoertel-lang/vault-kit.git ~/vault-kit
+cd ~/vault-kit &amp;&amp; ./install.sh</code></pre><button class="copy" type="button" data-copy="c-m-inst">Kopieren</button></div>
+            <dl class="opts">
+              <dt>./install.sh ~/MeinVault</dt><dd>anderer Ort für den Vault (Standard <code>~/Claude</code>)</dd>
+              <dt>--no-graphify</dt><dd>ohne Graphify</dd>
+              <dt>--live</dt><dd>Live-Anzeige laufender Sitzungen im Graphen; legt einen Hintergrunddienst an, der jede Minute läuft</dd>
+            </dl>
+            <p>Der Installer ist mehrfach ausführbar. Eine vorhandene <code>CLAUDE.md</code> im Vault bleibt unverändert, selbst geänderte Skills auch. Die globale <code>settings.json</code> wird nur ergänzt; vorher legt er eine Sicherung <code>settings.json.vor-vault-kit</code> an.</p>
+          </div>
+        </li>
+        <li data-step="mac-3">
+          <label class="step-title"><input type="checkbox"><span>Claude im Vault öffnen</span></label>
+          <div class="step-body">
+            <p><b>Terminal:</b> neues Fenster, dann <code>claude</code>. Die Funktion in <code>~/.zshrc</code> startet im Vault; <code>claude --here</code> startet im aktuellen Ordner.</p>
+            <p><b>Desktop-App:</b> Code, Ordner <code>~/Claude</code> wählen.</p>
+            <p>Immer den Vault selbst öffnen, nicht einen Unterordner.</p>
+          </div>
+        </li>
+        <li data-step="mac-4">
+          <label class="step-title"><input type="checkbox"><span>Feinschliff mit Claude</span></label>
+          <div class="step-body">
+            <p>Den Prompt aus <a href="https://github.com/mvcoertel-lang/vault-kit/blob/main/SETUP.md">SETUP.md</a> in die Sitzung im Vault einfügen. Claude prüft die Installation und passt die Skills an deine häufigsten Deliverables an.</p>
+          </div>
+        </li>
+        <li data-step="mac-5">
+          <label class="step-title"><input type="checkbox"><span>Wissensgraph öffnen</span></label>
+          <div class="step-body">
+            <div class="codebox"><pre><code id="c-m-graph">open ~/Claude/_Index/graph.html</code></pre><button class="copy" type="button" data-copy="c-m-graph">Kopieren</button></div>
+            <p>Er baut sich am Ende jeder Sitzung neu.</p>
+          </div>
+        </li>
+        <li data-step="mac-6">
+          <label class="step-title"><input type="checkbox"><span>Prüfen, ob es geklappt hat</span></label>
+          <div class="step-body">
+            <p>In Claude fragen:</p>
+            <div class="codebox"><pre class="wrapline"><code id="c-m-check">Welche Skills und Agenten hast du, und wo liegt dein Memory?</code></pre><button class="copy" type="button" data-copy="c-m-check">Kopieren</button></div>
+            <p>Erwartet: <code>vault-init</code>, <code>memory-write</code>, <code>analysis</code> und weitere, dazu der Pfad <code>~/.claude/projects/…/memory</code>.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ Alltag ============ -->
+  <section id="alltag">
+    <p class="label">Danach</p>
+    <h2>Im Alltag</h2>
+    <div class="daily">
+      <div>
+        <h3><i style="background:var(--anweisungen)"></i>Gewohnheiten</h3>
+        <ul>
+          <li>Immer den Vault öffnen, nie einen Unterordner.</li>
+          <li><b>/clear</b>bei jedem Themenwechsel. Was bleiben soll, steht schon in einer Datei.</li>
+          <li>Neues Vorhaben: <b>vault-init</b>legt das Projekt mit Ordnern und Regeln an.</li>
+          <li><b>/memory-review</b>gelegentlich, wenn Claude am Sitzungsende daran erinnert.</li>
+        </ul>
+      </div>
+      <div>
+        <h3><i style="background:var(--skills)"></i>Skills</h3>
+        <ul>
+          <li><b>analysis</b>belegte Auswertung, Vergleich, Empfehlung</li>
+          <li><b>dashboard</b>Kennzahlen und Charts</li>
+          <li><b>standalone-html</b>Seiten, die offline aufgehen</li>
+          <li><b>automation</b>Skripte und wiederkehrende Abläufe</li>
+          <li><b>markitdown</b>PDF, Word, PowerPoint und Excel als Markdown lesen</li>
+          <li><b>vault-init</b>neues Projekt anlegen</li>
+          <li><b>memory-write</b>ein Fakt, eine Datei</li>
+          <li><b>context-audit</b>messen, was im Kontext liegt, und entschlacken</li>
+        </ul>
+      </div>
+      <div>
+        <h3><i style="background:var(--memory)"></i>Agenten</h3>
+        <ul>
+          <li><b>scout</b>breite Suche über viele Dateien, nur lesend</li>
+          <li><b>verifier</b>eine Zahl oder Aussage gegenprüfen</li>
+          <li><b>librarian</b>Memory und Quellenregister aufräumen</li>
+          <li><b>sichtpruefer</b>Screenshots und Bilder prüfen, ohne den Hauptkontext zu füllen</li>
+        </ul>
+      </div>
+      <div>
+        <h3><i style="background:var(--projekte)"></i>Commands</h3>
+        <ul>
+          <li><b>/method</b>Standards und Vorlagen laden</li>
+          <li><b>/sources</b>Quellenregister</li>
+          <li><b>/memory-review</b>Memory aufräumen lassen</li>
+          <li><b>/memory-benchmark</b>prüfen, ob das richtige Memory gefunden wird</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Fehlerbehebung ============ -->
+  <section id="hilfe">
+    <p class="label">Wenn etwas hakt</p>
+    <h2>Fehlerbehebung</h2>
+    <dl class="faq">
+      <dt><small>Windows</small>„Die Ausführung von Skripts ist auf diesem System deaktiviert“</dt>
+      <dd>Den Installer mit <code>-ExecutionPolicy Bypass</code> starten wie oben. Hilft das nicht, sperrt eine Firmenrichtlinie Skripte: Weg A probieren oder die IT fragen.</dd>
+      <dt><small>Windows</small><code>python</code> öffnet den Microsoft Store</dt>
+      <dd>Python von python.org installieren und „Add python.exe to PATH“ ankreuzen. Danach ein neues PowerShell-Fenster öffnen und den Installer erneut starten.</dd>
+      <dt><small>Windows und Mac</small>Claude fragt trotz Freigaberegeln weiter nach</dt>
+      <dd>Eine Firmenrichtlinie kann eigene Freigaberegeln abschalten (<code>allowManagedPermissionRulesOnly</code>). Dann bleibt es beim Nachfragen; das Kit ändert daran nichts.</dd>
+      <dt><small>Windows und Mac</small>Wissensgraph leer oder veraltet</dt>
+      <dd>Von Hand neu bauen. Windows (PowerShell):
+        <div class="codebox"><pre><code id="c-f-win">py -3 "$env:USERPROFILE\.claude\tools\vault-index.py" "$env:USERPROFILE\Claude"</code></pre><button class="copy" type="button" data-copy="c-f-win">Kopieren</button></div>
+        Mac (Terminal):
+        <div class="codebox"><pre><code id="c-f-mac">python3 ~/.claude/tools/vault-index.py ~/Claude</code></pre><button class="copy" type="button" data-copy="c-f-mac">Kopieren</button></div></dd>
+      <dt><small>Windows und Mac</small>Memory scheint leer</dt>
+      <dd>Meist ist ein Unterordner statt des Vaults geöffnet. Claude im Vault-Ordner neu starten.</dd>
+      <dt><small>Windows und Mac</small><code>claude</code> startet im Terminal nicht im Vault</dt>
+      <dd>Ein neues Fenster öffnen, damit das PowerShell-Profil bzw. <code>~/.zshrc</code> neu geladen wird.</dd>
+    </dl>
+    <p class="caveat"><b>Hinweis:</b> Die Windows-Fassung ist neu und wurde noch nicht auf einem Windows-Rechner getestet. Wenn etwas nicht klappt, bitte die Ausgabe des Installers mitschicken.</p>
+  </section>
+
+  </main>
+
+  <footer>
+    <p>vault-kit · lokale Dateien, kein Cloud-Index, keine Datenbank · <a href="https://github.com/mvcoertel-lang/vault-kit">Quelle auf GitHub</a></p>
+    <p>Stand Oktober 2026</p>
+  </footer>
+
+  <p class="sr" id="live" aria-live="polite"></p>
+</div>
+
+<script>
+/* Alles ohne Netz. Gespeichert wird nur Komfort (Farbschema, gewähltes System, Haken) im Browser;
+   jeder Zugriff in try/catch, die Seite funktioniert auch ohne Speicher. */
+(function () {
+  'use strict';
+  var KEY = 'vault-kit-anleitung';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  var state = load();
+  var live = document.getElementById('live');
+  function say(t) { live.textContent = ''; setTimeout(function () { live.textContent = t; }, 30); }
+
+  /* Farbschema: Auto, Hell, Dunkel */
+  var THEMES = ['auto', 'light', 'dark'], NAMES = { auto: 'Auto', light: 'Hell', dark: 'Dunkel' };
+  var themeBtn = document.getElementById('theme');
+  function applyTheme(t) {
+    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = NAMES[t];
+  }
+  applyTheme(THEMES.indexOf(state.theme) >= 0 ? state.theme : 'auto');
+  themeBtn.addEventListener('click', function () {
+    var cur = THEMES.indexOf(state.theme) >= 0 ? state.theme : 'auto';
+    state.theme = THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length];
+    applyTheme(state.theme); save(state); say('Farbschema ' + NAMES[state.theme]);
+  });
+
+  /* Vorher / Nachher */
+  var view = document.getElementById('vergleich');
+  var viewBtns = view.querySelectorAll('.seg button[data-view]');
+  function setView(v) {
+    view.setAttribute('data-view', v);
+    for (var i = 0; i < viewBtns.length; i++) viewBtns[i].setAttribute('aria-pressed', String(viewBtns[i].getAttribute('data-view') === v));
+  }
+  for (var i = 0; i < viewBtns.length; i++) {
+    viewBtns[i].addEventListener('click', function () { setView(this.getAttribute('data-view')); say('Ansicht ' + this.textContent); });
+  }
+
+  /* Tabs Windows / Mac */
+  var tabs = document.querySelectorAll('[role="tab"][data-os]');
+  function setOS(os, focus) {
+    for (var i = 0; i < tabs.length; i++) {
+      var on = tabs[i].getAttribute('data-os') === os;
+      tabs[i].setAttribute('aria-selected', String(on));
+      tabs[i].tabIndex = on ? 0 : -1;
+      document.getElementById(tabs[i].getAttribute('aria-controls')).hidden = !on;
+      if (on && focus) tabs[i].focus();
+    }
+    state.os = os; save(state);
+  }
+  for (var j = 0; j < tabs.length; j++) {
+    tabs[j].addEventListener('click', function () { setOS(this.getAttribute('data-os')); });
+    tabs[j].addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End') return;
+      e.preventDefault();
+      var list = Array.prototype.slice.call(tabs), k = list.indexOf(this);
+      if (e.key === 'ArrowRight') k = (k + 1) % list.length;
+      else if (e.key === 'ArrowLeft') k = (k - 1 + list.length) % list.length;
+      else if (e.key === 'Home') k = 0; else k = list.length - 1;
+      setOS(list[k].getAttribute('data-os'), true);
+    });
+  }
+  setOS(state.os === 'mac' ? 'mac' : 'win');
+
+  /* Abhaken mit Fortschritt je System */
+  state.done = state.done || {};
+  var panels = document.querySelectorAll('.panel[data-list]');
+  function refresh(panel) {
+    var items = panel.querySelectorAll('li[data-step]'), n = 0;
+    for (var i = 0; i < items.length; i++) {
+      var on = !!state.done[items[i].getAttribute('data-step')];
+      items[i].querySelector('input').checked = on;
+      items[i].classList.toggle('done', on);
+      if (on) n++;
+    }
+    panel.querySelector('.count').textContent = n + ' von ' + items.length + ' erledigt';
+    panel.querySelector('.bar span').style.width = (items.length ? 100 * n / items.length : 0) + '%';
+  }
+  for (var p = 0; p < panels.length; p++) {
+    (function (panel) {
+      var items = panel.querySelectorAll('li[data-step]');
+      for (var i = 0; i < items.length; i++) {
+        (function (li) {
+          li.querySelector('input').addEventListener('change', function () {
+            state.done[li.getAttribute('data-step')] = this.checked; save(state); refresh(panel);
+          });
+        })(items[i]);
+      }
+      panel.querySelector('.reset').addEventListener('click', function () {
+        for (var i = 0; i < items.length; i++) delete state.done[items[i].getAttribute('data-step')];
+        save(state); refresh(panel); say('Haken zurückgesetzt');
+      });
+      refresh(panel);
+    })(panels[p]);
+  }
+
+  /* Kopieren: Clipboard-API, sonst Textfeld mit execCommand */
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); return ok;
+  }
+  function done(btn, ok) {
+    btn.textContent = ok ? 'Kopiert' : 'Markieren';
+    btn.classList.toggle('ok', ok);
+    say(ok ? 'In die Zwischenablage kopiert' : 'Kopieren nicht möglich, bitte markieren');
+    setTimeout(function () { btn.textContent = 'Kopieren'; btn.classList.remove('ok'); }, 1800);
+  }
+  var copies = document.querySelectorAll('button.copy[data-copy]');
+  for (var c = 0; c < copies.length; c++) {
+    copies[c].addEventListener('click', function () {
+      var btn = this, text = document.getElementById(btn.getAttribute('data-copy')).textContent;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { done(btn, true); }, function () { done(btn, fallbackCopy(text)); });
+      } else { done(btn, fallbackCopy(text)); }
+    });
+  }
+
+  document.documentElement.setAttribute('data-ready', '1');
+})();
+</script>
+</body>
+</html>

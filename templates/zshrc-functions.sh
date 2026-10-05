@@ -27,12 +27,12 @@ graphify() {
   local rc=$?
   local skill="$HOME/.claude/skills/graphify/SKILL.md"
   if [[ -f "$skill" ]] && ! grep -q "VAULT-HAUSREGELN" "$skill" 2>/dev/null; then
-    python3 "$HOME/.claude/tools/graphify-reapply-houserules.py" 2>/dev/null \
+    __PY__ "__TOOLS__/graphify-reapply-houserules.py" 2>/dev/null \
       && echo "↳ Vault-Hausregeln nach Graphify-Update wieder eingesetzt"
   fi
   if [[ "$1" == "update" ]]; then
     local tgt="${2:-.}"; [[ "$tgt" == -* ]] && tgt="."
-    python3 "$HOME/.claude/tools/graph-viewer.py" "$tgt" >/dev/null 2>&1 \
+    __PY__ "__TOOLS__/graph-viewer.py" "$tgt" >/dev/null 2>&1 \
       && echo "↳ eigener Betrachter aktualisiert (graph.viewer.html)"
   fi
   return $rc

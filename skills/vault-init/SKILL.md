@@ -26,7 +26,7 @@ Legt ein neues Projekt im Vault an, ohne leeres Gerüst.
    | 07 | Build | Code, Skripte |
    | 08 | Reference | Quellen, Zitate, PDFs |
    | 09 | Rules | Vorlagen und Formatregeln für dieses Projekt |
-3. `__VAULT__/<projekt>/CLAUDE.md` schreiben: **Was / Für wen / Status**, spezifische Regeln, "Wo was liegt".
+3. `__VAULT__/<projekt>/CLAUDE.md` schreiben, kurz halten: **Zweck**, **Stand** in wenigen Zeilen, Regeln, Fallen, Entscheidungen, Ablage ("Wo was liegt"). Tagesberichte gehören nicht hinein, sondern nach `08_Reference/CHRONIK_<Thema>.md`; die `CLAUDE.md` verweist darauf.
 4. `__VAULT__/.claude/commands/<projekt>.md` als Arbeitsmodus-Command anlegen (siehe /method als Muster).
 5. Die Routing-Zeile in `__VAULT__/CLAUDE.md` ergänzen (eine Zeile).
 

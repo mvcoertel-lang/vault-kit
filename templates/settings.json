@@ -1,16 +1,60 @@
 {
   "autoMemoryEnabled": true,
+  "autoMemoryDirectory": "__MEMDIR__",
+  "env": {
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "300000"
+  },
   "permissions": {
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "__VAULT__"
+    ],
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Skill",
+      "Agent",
+      "Task",
+      "TodoWrite",
+      "WebSearch",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(diff *)",
+      "Bash(file *)",
+      "Bash(stat *)",
+      "Bash(pwd)",
+      "Bash(echo *)",
+      "Bash(mkdir *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(graphify *)",
+      "Bash(markitdown *)",
+      "Bash(__PY__ __TOOLS__/vault-index.py *)",
+      "Bash(__PY__ __TOOLS__/memory-hygiene.py *)",
+      "Bash(__PY__ __TOOLS__/graph-viewer.py *)",
+      "Bash(__PY__ __TOOLS__/index-zusammenfassen.py *)"
+    ],
     "ask": [
-      "Bash(curl:*)",
-      "Bash(wget:*)",
-      "Bash(git push:*)",
-      "WebFetch",
-      "Bash(rm:*)"
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(git push *)",
+      "Bash(rm *)"
     ],
     "deny": [
       "Read(./**/.env)",
-      "Read(~/.ssh/**)"
+      "Read(./**/.env.*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.claude/.credentials.json)"
     ]
   },
   "hooks": {
@@ -19,13 +63,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ~/.claude/tools/vault-index.py __VAULT__ > ~/.claude/tools/last-index.log 2>&1 || true",
+            "command": "__PY__ \"__TOOLS__/vault-index.py\" \"__VAULT__\" --hook",
             "timeout": 60,
             "statusMessage": "Index-Graph wird aufgefrischt…"
           },
           {
             "type": "command",
-            "command": "python3 ~/.claude/tools/memory-hygiene.py __MEMDIR__ || true",
+            "command": "__PY__ \"__TOOLS__/memory-hygiene.py\" \"__MEMDIR__\" --hook",
             "timeout": 15,
             "statusMessage": "Memory-Hygiene wird geprüft…"
           }

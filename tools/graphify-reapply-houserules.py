@@ -7,6 +7,13 @@ Aufruf: python3 ~/.claude/tools/graphify-reapply-houserules.py
 Wird vom zsh-graphify-Wrapper nach `graphify install` automatisch aufgerufen.
 """
 import pathlib
+import sys
+
+for _s in (sys.stdout, sys.stderr):  # Windows-Konsole: UTF-8 statt cp1252
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
 
 H = pathlib.Path.home()
 skill = H / ".claude/skills/graphify/SKILL.md"
