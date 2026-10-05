@@ -261,7 +261,7 @@ footer p{margin:0.2rem 0}
     <ul class="facts">
       <li><b>Dauer</b> etwa fünf Minuten</li>
       <li><b>System</b> Windows 11 oder macOS</li>
-      <li><b>Quelle</b> <a href="https://github.com/moaccenturestrategy/vault-kit">github.com/moaccenturestrategy/vault-kit</a></li>
+      <li><b>Quelle</b> <a href="https://github.com/mvcoertel-lang/vault-kit">github.com/mvcoertel-lang/vault-kit</a></li>
     </ul>
     <nav class="toc" aria-label="Inhalt">
       <a href="#vergleich">Vorher und Nachher</a>
@@ -460,7 +460,7 @@ footer p{margin:0.2rem 0}
     <div class="way">
       <div class="way-head"><h3>Weg A: Claude macht es</h3><span class="badge">Empfohlen</span></div>
       <p class="note">In Claude Code einfügen (Desktop-App, Code-Tab, beliebiger Ordner, oder Terminal):</p>
-      <div class="codebox"><pre class="wrapline"><code id="c-prompt">Richte mir das vault-kit ein: Lade https://github.com/moaccenturestrategy/vault-kit nach ~/vault-kit (git clone, sonst als ZIP), führe unter Windows `powershell -ExecutionPolicy Bypass -File install.ps1` aus, auf dem Mac `./install.sh`, und zeig mir die Ausgabe. Sag mir danach, welchen Ordner ich in Claude öffnen soll.</code></pre><button class="copy" type="button" data-copy="c-prompt">Kopieren</button></div>
+      <div class="codebox"><pre class="wrapline"><code id="c-prompt">Richte mir das vault-kit ein: Lade https://github.com/mvcoertel-lang/vault-kit nach ~/vault-kit (git clone, sonst als ZIP), führe unter Windows `powershell -ExecutionPolicy Bypass -File install.ps1` aus, auf dem Mac `./install.sh`, und zeig mir die Ausgabe. Sag mir danach, welchen Ordner ich in Claude öffnen soll.</code></pre><button class="copy" type="button" data-copy="c-prompt">Kopieren</button></div>
       <p class="note">Danach weiter bei Schritt 3 von Weg B.</p>
     </div>
 
@@ -486,7 +486,7 @@ footer p{margin:0.2rem 0}
         <li data-step="win-2">
           <label class="step-title"><input type="checkbox"><span>Kit holen und installieren (PowerShell)</span></label>
           <div class="step-body">
-            <div class="codebox"><pre><code id="c-w-inst">git clone https://github.com/moaccenturestrategy/vault-kit.git $HOME\vault-kit
+            <div class="codebox"><pre><code id="c-w-inst">git clone https://github.com/mvcoertel-lang/vault-kit.git $HOME\vault-kit
 cd $HOME\vault-kit
 powershell -ExecutionPolicy Bypass -File .\install.ps1</code></pre><button class="copy" type="button" data-copy="c-w-inst">Kopieren</button></div>
             <dl class="opts">
@@ -494,7 +494,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1</code></pre><button class
               <dt>-NoGraphify</dt><dd>ohne Graphify</dd>
               <dt>-Live</dt><dd>Live-Anzeige laufender Sitzungen im Graphen; legt eine Aufgabe an, die jede Minute läuft</dd>
             </dl>
-            <p>Ohne git: <a href="https://github.com/moaccenturestrategy/vault-kit/archive/refs/heads/main.zip">ZIP herunterladen</a>, entpacken und im entpackten Ordner dasselbe <code>install.ps1</code> starten. Der Installer ist mehrfach ausführbar. Eine vorhandene <code>CLAUDE.md</code> im Vault bleibt unverändert, selbst geänderte Skills auch. Die globale <code>settings.json</code> wird nur ergänzt; vorher legt er eine Sicherung <code>settings.json.vor-vault-kit</code> an.</p>
+            <p>Ohne git: <a href="https://github.com/mvcoertel-lang/vault-kit/archive/refs/heads/main.zip">ZIP herunterladen</a>, entpacken und im entpackten Ordner dasselbe <code>install.ps1</code> starten. Der Installer ist mehrfach ausführbar. Eine vorhandene <code>CLAUDE.md</code> im Vault bleibt unverändert, selbst geänderte Skills auch. Die globale <code>settings.json</code> wird nur ergänzt; vorher legt er eine Sicherung <code>settings.json.vor-vault-kit</code> an.</p>
           </div>
         </li>
         <li data-step="win-3">
@@ -508,7 +508,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1</code></pre><button class
         <li data-step="win-4">
           <label class="step-title"><input type="checkbox"><span>Feinschliff mit Claude</span></label>
           <div class="step-body">
-            <p>Den Prompt aus <a href="https://github.com/moaccenturestrategy/vault-kit/blob/main/SETUP.md">SETUP.md</a> in die Sitzung im Vault einfügen. Claude prüft die Installation und passt die Skills an deine häufigsten Deliverables an.</p>
+            <p>Den Prompt aus <a href="https://github.com/mvcoertel-lang/vault-kit/blob/main/SETUP.md">SETUP.md</a> in die Sitzung im Vault einfügen. Claude prüft die Installation und passt die Skills an deine häufigsten Deliverables an.</p>
           </div>
         </li>
         <li data-step="win-5">
@@ -547,7 +547,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1</code></pre><button class
         <li data-step="mac-2">
           <label class="step-title"><input type="checkbox"><span>Kit holen und installieren (Terminal)</span></label>
           <div class="step-body">
-            <div class="codebox"><pre><code id="c-m-inst">git clone https://github.com/moaccenturestrategy/vault-kit.git ~/vault-kit
+            <div class="codebox"><pre><code id="c-m-inst">git clone https://github.com/mvcoertel-lang/vault-kit.git ~/vault-kit
 cd ~/vault-kit &amp;&amp; ./install.sh</code></pre><button class="copy" type="button" data-copy="c-m-inst">Kopieren</button></div>
             <dl class="opts">
               <dt>./install.sh ~/MeinVault</dt><dd>anderer Ort für den Vault (Standard <code>~/Claude</code>)</dd>
@@ -568,7 +568,7 @@ cd ~/vault-kit &amp;&amp; ./install.sh</code></pre><button class="copy" type="bu
         <li data-step="mac-4">
           <label class="step-title"><input type="checkbox"><span>Feinschliff mit Claude</span></label>
           <div class="step-body">
-            <p>Den Prompt aus <a href="https://github.com/moaccenturestrategy/vault-kit/blob/main/SETUP.md">SETUP.md</a> in die Sitzung im Vault einfügen. Claude prüft die Installation und passt die Skills an deine häufigsten Deliverables an.</p>
+            <p>Den Prompt aus <a href="https://github.com/mvcoertel-lang/vault-kit/blob/main/SETUP.md">SETUP.md</a> in die Sitzung im Vault einfügen. Claude prüft die Installation und passt die Skills an deine häufigsten Deliverables an.</p>
           </div>
         </li>
         <li data-step="mac-5">
@@ -665,7 +665,7 @@ cd ~/vault-kit &amp;&amp; ./install.sh</code></pre><button class="copy" type="bu
   </main>
 
   <footer>
-    <p>vault-kit · lokale Dateien, kein Cloud-Index, keine Datenbank · <a href="https://github.com/moaccenturestrategy/vault-kit">Quelle auf GitHub</a></p>
+    <p>vault-kit · lokale Dateien, kein Cloud-Index, keine Datenbank · <a href="https://github.com/mvcoertel-lang/vault-kit">Quelle auf GitHub</a></p>
     <p>Stand Oktober 2026</p>
   </footer>
 

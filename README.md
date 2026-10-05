@@ -49,7 +49,7 @@ vault-kit turns that mechanism into a system:
 **Windows (PowerShell):**
 
 ```powershell
-git clone https://github.com/moaccenturestrategy/vault-kit.git $HOME\vault-kit
+git clone https://github.com/mvcoertel-lang/vault-kit.git $HOME\vault-kit
 cd $HOME\vault-kit
 powershell -ExecutionPolicy Bypass -File .\install.ps1          # vault: C:\Users\<you>\Claude
 #   -Vault D:\MyVault   custom location
@@ -63,7 +63,7 @@ window → `claude`.
 **macOS / Linux:**
 
 ```bash
-git clone https://github.com/moaccenturestrategy/vault-kit.git ~/vault-kit
+git clone https://github.com/mvcoertel-lang/vault-kit.git ~/vault-kit
 cd ~/vault-kit && ./install.sh          # vault: ~/Claude   (options: <path>, --live, --no-graphify)
 ```
 
